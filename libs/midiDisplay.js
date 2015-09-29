@@ -40,6 +40,29 @@ function midiDisplay (displayCanvasId, width, scale)
     };
 
 
+    function staffVexTab (notes, key)
+    {
+        var text = '';
+        switch (key) {
+            case 'treble':
+                text += 'options space=55\n'; // put enough space for the highest note
+                text += 'tabstave notation=true tablature=false\n'; // treble key (default)
+                break;
+            case 'bass':
+                text += 'tabstave notation=true tablature=false clef=bass\n'; // bass key
+                break;
+        }
+
+        text += 'notes ' + notes + '\n';
+
+        if (key === 'bass') {
+            text += 'options space=50\n'; // put enough space for the lowest note
+        }
+
+        return text;
+    };
+
+
     function renderVexTab (code)
     {
         // create renderer from canvas element #'displayCanvasId'
@@ -72,6 +95,22 @@ function midiDisplay (displayCanvasId, width, scale)
         }
 
         renderVexTab (pianoVexTab (trebleNotes, bassNotes));
+    };
+
+
+    this.displayStaffNotes = function (notes, key)
+    {
+        var vexTabNotes = '';
+        if (!notes) {
+            // display rest
+            vexTabNotes = '##';
+        } else {
+            notes.forEach (function (n) {
+                vexTabNotes += ' ' + midi2VexTab[n];
+            });
+        }
+
+        renderVexTab (staffVexTab (vexTabNotes, key));
     };
 }
 
